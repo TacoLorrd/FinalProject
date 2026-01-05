@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeltaView — F1 Data Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800&family=Titillium+Web:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* SOFTS (DARK MODE) - PURE RACING DEPTH */
+            --bg-main: #02060C;
+            --bg-card: #0D141F;
+            --bg-panel: #161F2C;
+            --border-ui: rgba(255, 255, 255, 0.08);
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --rbr-red: #D31336;
+            --rbr-yellow: #FFD700;
+            --accent-blue: #00A3E0;
+            --shadow-3d: 0 20px 50px -12px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.1);
+            --glow: 0 0 20px rgba(211, 19, 54, 0.2);
+            --card-edge: #D31336;
+            --loader-color: #D31336;
+            --smoke-color: rgba(255, 255, 255, 0.4);
+            --chart-grid: rgba(255, 255, 255, 0.05);
+        }
+
+        .medium-mode {
+            /* MEDIUMS (LIGHT MODE) - CLEAN BROADCAST AESTHETIC */
+            --bg-main: #F1F5F9;
+            --bg-card: #FFFFFF;
+            --bg-panel: #E2E8F0;
+            --border-ui: rgba(15, 23, 42, 0.12); /* Increased for light mode */
+            --text-main: #0F172A;
+            --text-muted: #475569; /* Darkened for better readability */
+            --rbr-red: #E10600;
+            --rbr-yellow: #C29100; /* Darkened slightly for contrast on white */
+            --accent-blue: #004687;
+            --shadow-3d: 0 4px 12px -2px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+            --glow: 0 0 20px rgba(225, 6, 0, 0.08);
+            --card-edge: #0F172A;
+            --smoke-color: rgba(15, 23, 42, 0.2);
+            --chart-grid: rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        body:not(.medium-mode)::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-titillium { font-family: 'Titillium Web', sans-serif; }
+
+        .panel-3d {
+            background: var(--bg-card);
+            border: 1px solid var(--border-ui);
+            box-shadow: var(--shadow-3d);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+        }
+
+        .panel-3d::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 15px;
+            height: 15px;
+            background: var(--card-edge);
+            clip-path: polygon(100% 0, 0 100%, 100% 100%);
+            transition: background-color 0.3s ease;
+        }
+
+        /* Modal Overlay - Anchored to Top for immediate visibility */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 4rem 1.5rem;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-broadcast {
+            animation: broadcastFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes broadcastFade {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .loader {
+            width: 140px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            -webkit-mask: linear-gradient(0deg,#000 55%,#0000 0) bottom/100% 18.18%;
+            background:
+                linear-gradient(var(--loader-color) 0 0) bottom/100% 0% no-repeat
+                rgba(255,255,255,0.05);
+            animation: l8 2s infinite steps(7);
+        }
+
+        @keyframes l8 {
+            100% {background-size:100% 115%}
+        }
+
+        /* Burnout Smoke Effect */
+        .smoke-particle {
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, var(--smoke-color) 10%, transparent 75%);
+            filter: blur(4px);
+            pointer-events: none;
+            z-index: 2;
+            animation: smoke-burnout-realistic 1s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            opacity: 0;
+        }
+
+        @keyframes smoke-burnout-realistic {
+            0% { transform: translate(var(--x), 0) scale(0.3) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translate(calc(var(--x) + var(--driftX)), calc(-10px + var(--driftY))) scale(var(--scale)) rotate(var(--rot)); opacity: 0; }
+        }
+
+        .timing-monitor { border-collapse: separate; border-spacing: 0 6px; }
+        .timing-monitor tr { 
+            background: var(--bg-panel); 
+            border-radius: 4px; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            color: var(--text-main);
+        }
+        .timing-monitor tr:hover { 
+            transform: translateX(8px); 
+            background: var(--rbr-red); 
+            color: #FFFFFF !important; 
+            box-shadow: 0 4px 12px rgba(225, 6, 0, 0.15);
+        }
+        .timing-monitor td { padding: 14px 20px; }
+
+        .f1-toggle-container {
+            perspective: 1200px;
+            position: relative;
+        }
+
+        .f1-toggle-container input {
+            display: none;
+        }
+
+        .f1-toggle-track {
+            position: relative;
+            width: 84px;
+            height: 42px;
+            background: #0F172A;
+            border-radius: 24px;
+            border: 1px solid var(--border-ui);
+            box-shadow: 
+                inset 0 4px 8px rgba(0,0,0,0.4),
+                0 1px 1px rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            transform-style: preserve-3d;
+        }
+
+        .medium-mode .f1-toggle-track {
+            background: #E2E8F0;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .f1-tire-knob {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            top: 2px;
+            left: 2px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #333 0%, #111 60%, #000 100%);
+            box-shadow: 
+                0 4px 10px rgba(0, 0, 0, 0.4),
+                inset 0 2px 4px rgba(255, 255, 255, 0.1);
+            transition: all 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+            transform: translateZ(10px);
+            z-index: 10;
+        }
+
+        .f1-tire-knob::after {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            border: 2.5px solid var(--rbr-red);
+            opacity: 0.9;
+            transition: border-color 0.5s ease;
+        }
+
+        .f1-toggle-container input:checked ~ .f1-toggle-track .f1-tire-knob {
+            left: 44px;
+            transform: translateZ(12px) rotate(360deg);
+        }
+
+        .f1-toggle-container input:checked ~ .f1-toggle-track .f1-tire-knob::after {
+            border-color: var(--rbr-yellow);
+        }
+
+        /* Generic Inward Transition */
+        .animate-in {
+            animation: animateIn 0.5s ease-out forwards;
+        }
+        @keyframes animateIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .btn-industrial {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-ui);
+            color: var(--text-main);
+            text-transform: uppercase;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 2px;
+            padding: 10px 20px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 0 var(--border-ui);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .btn-industrial:hover { 
+            background: var(--rbr-red); 
+            color: white; 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1); 
+            border-color: var(--rbr-red); 
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "recharts": "https://esm.sh/recharts@^3.6.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
