@@ -1,66 +1,51 @@
-<!-- Final project — stability pass only. No feature changes allowed. -->
-<!-- Banner removed (external link). -->
+<!-- DeltaView — F1 Data Dashboard | Stability pass only -->
 
-[![CI](https://github.com/TacoLorrd/FinalProject/actions/workflows/ci.yml/badge.svg)](https://github.com/TacoLorrd/FinalProject/actions)
-[![Coverage](https://codecov.io/gh/TacoLorrd/FinalProject/branch/main/graph/badge.svg)](https://codecov.io/gh/TacoLorrd/FinalProject)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/TacoLorrd/FinalProject/main/logo.png" alt="DeltaView Logo" width="200" />
+</p>
 
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-20232a?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-419BFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Recharts](https://img.shields.io/badge/Recharts-FF6B6B?style=flat)](https://recharts.org/)
+<h1 align="center">DeltaView 🏁</h1>
 
-# DeltaView 🏁  
-### Formula 1 Data Dashboard
+<p align="center">
+  A slick interactive Formula 1 dashboard built with TypeScript, React, Vite, and Recharts.
+</p>
 
-DeltaView is a fast, interactive Formula 1 dashboard built to explore race results, driver standings, and constructor performance across seasons.
-
-I built this as a **Grade 11 final project** with a focus on:
-- clean data flow  
-- readable UI  
-- performance & stability (no feature creep)
-
-The goal wasn’t flashy animations — it was making F1 data **easy to understand and fun to explore**.
+<p align="center">
+  <a href="https://github.com/TacoLorrd/FinalProject/actions">
+    <img src="https://github.com/TacoLorrd/FinalProject/actions/workflows/ci.yml/badge.svg" alt="CI Status" />
+  </a>
+  <a href="https://codecov.io/gh/TacoLorrd/FinalProject">
+    <img src="https://codecov.io/gh/TacoLorrd/FinalProject/branch/main/graph/badge.svg" alt="Coverage" />
+  </a>
+</p>
 
 ---
 
-## 🚀 What it does
+## 👋 Hey — what is this?
 
-- **Season Dashboard**  
-  View standings, trends, and key stats at a glance.
+I’m a Grade 11 student and built **DeltaView** to explore Formula 1 data in an interactive way.  
+It’s not massive, but it’s **fast, clean, and actually useful** for digging through seasons, driver/team standings, and race results.
 
-- **Drivers & Constructors**  
-  Browse rankings, sort results, and drill into details.
-
-- **Race Results**  
-  Inspect individual races by year and event.
-
-- **Compare Mode**  
-  Put drivers or teams side-by-side and see who actually performed better.
-
-- **Accessible UI**  
-  Theme toggle, keyboard navigation, focus management — built properly.
-
-- **Client-side caching**  
-  API responses are cached in `localStorage` so the app can fall back if the network flakes.
-
-- **Tested**  
-  Unit tests with Vitest (jsdom where needed).
+Tech stack:
+**TypeScript • React • Vite • Recharts • Vitest**
 
 ---
 
-## 🧠 Tech Stack
+## 🚀 Features
 
-- **Frontend:** React + TypeScript  
-- **Build tool:** Vite  
-- **Charts:** Recharts  
-- **Testing:** Vitest + jsdom  
-- **Data:** Formula 1 public API (wrapped + cached)
+- 📊 **Season Dashboard** – view standings, trends, and key stats
+- 🏎️ **Drivers & Teams** – sorted lists with detail views
+- 📅 **Race Results** – see who placed where for each event
+- ⚖️ **Compare Mode** – side-by-side driver/team seasons
+- 🎨 **Accessible UI** – theme toggle + keyboard friendly components
+- 💾 **Client caching** – cache API responses in `localStorage`
+- ✅ **Tests** – Vitest coverage for core logic & DOM UI
 
 ---
 
-## ▶️ Run it locally
+## 💻 Try it locally
 
-**Requirements:** Node.js v18+ (recommended), npm
+If you wanna tweak or check it out:
 
 ```bash
 npm install
