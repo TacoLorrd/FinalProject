@@ -94,9 +94,9 @@ const Dashboard: React.FC<DashboardProps> = ({ driverStandings, constructorStand
         <div className="absolute top-0 left-0 w-1.5 h-full bg-[#D31336]"></div>
         
         <div className="space-y-3 relative z-10">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3" aria-live="polite">
              <div className="px-2 py-0.5 bg-[#D31336] text-[10px] font-orbitron font-bold text-white uppercase rounded-sm">Live Feed</div>
-             <div className="text-[10px] font-orbitron font-bold text-[var(--accent-blue)] tracking-widest uppercase opacity-80">Telemetry Active: {selectedYear} Season</div>
+             <div className="text-[10px] font-orbitron font-bold text-[var(--accent-blue)] tracking-widest uppercase opacity-80" aria-label={`Telemetry active for ${selectedYear} season`}>Telemetry Active: {selectedYear} Season</div>
           </div>
           <h2 className="text-4xl md:text-6xl font-titillium font-black italic tracking-tighter uppercase leading-none">
             <span className="text-[var(--text-main)]">DELTA</span> <span className="text-[#D31336]">VIEW</span>
@@ -187,13 +187,13 @@ const Dashboard: React.FC<DashboardProps> = ({ driverStandings, constructorStand
             </div>
           </div>
           <div className="p-4 overflow-x-auto">
-            <table className="w-full timing-monitor min-w-[600px]">
+            <table aria-label="Top 10 driver standings" className="w-full timing-monitor min-w-[600px]">
               <thead className="text-[10px] font-orbitron font-bold text-[var(--text-muted)] uppercase">
                 <tr>
-                  <th className="text-left w-12">Pos</th>
-                  <th className="text-left">Pilot</th>
-                  <th className="text-left">Chassis</th>
-                  <th className="text-right">Points</th>
+                  <th scope="col" className="text-left w-12">Pos</th>
+                  <th scope="col" className="text-left">Pilot</th>
+                  <th scope="col" className="text-left">Chassis</th>
+                  <th scope="col" className="text-right">Points</th>
                 </tr>
               </thead>
               <tbody className="font-bold">

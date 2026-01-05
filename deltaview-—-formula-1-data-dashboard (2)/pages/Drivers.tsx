@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { DriverStanding } from '../types';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 import { audioService } from '../services/audioService';
 
@@ -39,6 +40,18 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
 
   const isMediumMode = document.body.classList.contains('medium-mode');
 
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
+
+  useFocusTrap(modalRef, !!selectedDriver);
+
+  useEffect(() => {
+    if (selectedDriver) {
+      // Focus the close button when dialog opens for keyboard users
+      setTimeout(() => closeButtonRef.current?.focus(), 0);
+    }
+  }, [selectedDriver]);
+
   const filtered = useMemo(() => {
     return standings
       .filter(s => 
@@ -75,24 +88,62 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
           <p className="text-[var(--text-muted)] text-[10px] font-orbitron font-bold uppercase tracking-[0.2em] mt-2">Active Field Verification Index</p>
         </div>
         
-        <div className="flex gap-4 w-full md:w-auto">
+        <div className="flex gap-4 w-full md:w-auto items-center">
           <input 
+            id="driver-search"
+            aria-label="Search drivers"
             type="text"
             placeholder="Search Pilot..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onMouseEnter={() => audioService.playHover()}
-            className="flex-1 md:w-64 bg-[var(--bg-panel)] border border-[var(--border-ui)] rounded-none px-4 py-2 text-sm focus:border-[var(--rbr-yellow)] outline-none font-bold text-[var(--text-main)]"
+            className="flex-1 md:w-64 bg-[var(--bg-panel)] border border-[var(--border-ui)] rounded-none px-4 py-2 text-sm focus:border-[var(--rbr-yellow)] outline-none font-bold text-[var(--text-main)] focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
           />
           <select 
+            id="driver-sort"
+            aria-label="Sort drivers"
             value={sortBy}
             onChange={(e) => { audioService.playClick(); setSortBy(e.target.value as any); }}
             onMouseEnter={() => audioService.playHover()}
-            className="bg-[var(--bg-panel)] border border-[var(--border-ui)] px-4 py-2 text-xs font-black uppercase outline-none cursor-pointer text-[var(--text-main)]"
+            className="bg-[var(--bg-panel)] border border-[var(--border-ui)] px-4 py-2 text-xs font-black uppercase outline-none cursor-pointer text-[var(--text-main)] focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
           >
             <option value="points">Sort: PTS</option>
             <option value="wins">Sort: WINS</option>
           </select>
+
+          <button
+            onMouseEnter={() => audioService.playHover()}
+            onClick={() => { audioService.playClick();
+              const csvRows = [
+                ['Number','Given Name','Family Name','Team','Nationality','Age','Pts','Wins','Position']
+              ];
+              filtered.forEach(s => {
+                csvRows.push([
+                  s.Driver.permanentNumber || '',
+                  s.Driver.givenName,
+                  s.Driver.familyName,
+                  s.Constructors[0]?.name || '',
+                  s.Driver.nationality || '',
+                  calculateAge(s.Driver.dateOfBirth),
+                  s.points,
+                  s.wins,
+                  s.position
+                ]);
+              });
+              const csvContent = csvRows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+              const blob = new Blob([csvContent], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `drivers_${selectedYear}.csv`;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              URL.revokeObjectURL(url);
+            }}
+            className="px-4 py-2 bg-[var(--rbr-yellow)] text-black font-bold uppercase tracking-[0.15em] text-xs"
+            aria-label="Download visible drivers as CSV"
+          >Export CSV</button>
         </div>
       </div>
 
@@ -105,9 +156,13 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
           return (
             <div 
               key={s.Driver.driverId} 
+              role="button"
+              tabIndex={0}
+              aria-label={`Open ${s.Driver.givenName} ${s.Driver.familyName} details`}
               onMouseEnter={() => audioService.playHover()}
               onClick={() => { audioService.playClick(); setSelectedDriver(s); setShowBio(false); }}
-              className="panel-3d group cursor-pointer hover:scale-[1.02] transition-all duration-300 relative"
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audioService.playClick(); setSelectedDriver(s); setShowBio(false); } }}
+              className="panel-3d group cursor-pointer hover:scale-[1.02] transition-all duration-300 relative focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
               style={{ 
                 borderLeft: `6px solid ${teamColor}`,
               } as React.CSSProperties}
@@ -158,9 +213,9 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
       </div>
 
       {selectedDriver && (
-        <div className="modal-overlay" onClick={() => { audioService.playClick(); setSelectedDriver(null); }}>
-          <div className="panel-3d w-full max-w-4xl animate-broadcast self-start" onClick={e => e.stopPropagation()}>
-            <div className="relative h-64 bg-gradient-to-br from-[var(--bg-panel)] to-[var(--bg-main)] flex items-center p-8 overflow-hidden">
+        <div className="modal-overlay" onClick={() => { audioService.playClick(); setSelectedDriver(null); }} role="dialog" aria-modal="true" aria-labelledby="driver-dialog-title" tabIndex={-1} onKeyDown={(e) => { if (e.key === 'Escape') { audioService.playClick(); setSelectedDriver(null); } }}>
+          <div ref={modalRef} className="panel-3d w-full max-w-4xl animate-broadcast self-start" onClick={e => e.stopPropagation()}>
+            <div className="relative h-64 bg-gradient-to-br from-[var(--bg-panel)] to-[var(--bg-main)] flex items-center p-8 overflow-hidden" role="img" aria-label={`Performance profile and data for ${selectedDriver.Driver.givenName} ${selectedDriver.Driver.familyName}`} aria-describedby="driver-radar-desc">
               <div 
                 className="absolute top-0 right-0 w-1/2 h-full opacity-10 font-orbitron text-[15rem] font-black italic select-none"
                 style={{ color: TEAM_COLORS[selectedDriver.Constructors[0]?.constructorId] }}
@@ -177,7 +232,7 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
                 </div>
                 <div>
                   <div className="text-[10px] font-orbitron font-bold text-[var(--rbr-yellow)] tracking-[0.5em] uppercase mb-2">Technical Pilot Data</div>
-                  <h3 className="text-4xl md:text-6xl font-titillium font-black italic uppercase tracking-tighter leading-none text-[var(--text-main)]">
+                  <h3 id="driver-dialog-title" className="text-4xl md:text-6xl font-titillium font-black italic uppercase tracking-tighter leading-none text-[var(--text-main)]">
                     {selectedDriver.Driver.givenName} <span className="text-[var(--rbr-red)]">{selectedDriver.Driver.familyName}</span>
                   </h3>
                   <div className="flex items-center space-x-4 md:space-x-6 mt-4">
@@ -188,9 +243,11 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
                 </div>
               </div>
               <button 
+                ref={closeButtonRef}
                 onClick={() => { audioService.playClick(); setSelectedDriver(null); }}
                 onMouseEnter={() => audioService.playHover()}
-                className="absolute top-6 right-8 text-[var(--text-muted)] hover:text-[var(--text-main)] text-3xl font-light z-20"
+                className="absolute top-6 right-8 text-[var(--text-muted)] hover:text-[var(--text-main)] text-3xl font-light z-20 focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
+                aria-label="Close driver details dialog"
               >✕</button>
             </div>
 
@@ -200,8 +257,9 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
                 <div className="panel-3d p-6 !bg-[var(--bg-panel)]/30 flex flex-col items-center">
                   <div className="text-[10px] font-orbitron font-black text-[var(--rbr-yellow)] uppercase tracking-[0.3em] mb-6 w-full text-center">Performance Profile</div>
                   <div className="w-full h-64">
+                    <div id="driver-radar-desc" className="sr-only">Radar chart showing performance metrics for the selected driver.</div>
                     <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={getRadarData(selectedDriver)}>
+                      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={getRadarData(selectedDriver)} aria-label={`Performance radar chart for ${selectedDriver.Driver.givenName} ${selectedDriver.Driver.familyName}`} role="img">
                         <PolarGrid stroke={isMediumMode ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.1)"} />
                         <PolarAngleAxis dataKey="subject" tick={{ fill: isMediumMode ? '#0F172A' : '#94A3B8', fontSize: 10, fontWeight: 800 }} />
                         <Radar

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { ConstructorStanding } from '../types';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, 
   PieChart, Pie, Legend
@@ -26,6 +27,9 @@ const TEAM_COLORS: Record<string, string> = {
 
 const Teams: React.FC<TeamsProps> = ({ standings, onCompare }) => {
   const [telemetryTeam, setTelemetryTeam] = useState<ConstructorStanding | null>(null);
+  const telemetryRef = useRef<HTMLDivElement | null>(null);
+
+  useFocusTrap(telemetryRef, !!telemetryTeam);
 
   const pointsData = standings.map(s => ({
     name: s.Constructor.name,
@@ -208,7 +212,7 @@ const Teams: React.FC<TeamsProps> = ({ standings, onCompare }) => {
           const tColor = TEAM_COLORS[cid] || '#888888';
           
           return (
-            <div key={cid} className="panel-3d group cursor-pointer hover:scale-[1.02] transition-all duration-300" style={{ borderLeft: `4px solid ${tColor}` }}>
+            <div key={cid} role="button" tabIndex={0} aria-label={`Open telemetry for ${s.Constructor.name}`} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audioService.playClick(); setTelemetryTeam(s); } }} className="panel-3d group cursor-pointer hover:scale-[1.02] transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]" style={{ borderLeft: `4px solid ${tColor}` }}>
               <div className="p-8 relative overflow-hidden">
                 <div className="absolute top-[0px] right-[10px] font-orbitron text-9xl opacity-5 group-hover:opacity-10 transition-opacity font-black italic select-none pointer-events-none text-[var(--text-main)]">
                   {s.position}
@@ -236,12 +240,14 @@ const Teams: React.FC<TeamsProps> = ({ standings, onCompare }) => {
                    <button 
                     onMouseEnter={() => audioService.playHover()}
                     onClick={() => { audioService.playClick(); setTelemetryTeam(s); }}
-                    className="btn-industrial w-full !bg-[var(--text-main)]/5 !border-[var(--border-ui)] hover:!bg-[var(--rbr-red)] hover:!text-white"
+                    aria-label={`Open data stream for ${s.Constructor.name}`}
+                    className="btn-industrial w-full !bg-[var(--text-main)]/5 !border-[var(--border-ui)] hover:!bg-[var(--rbr-red)] hover:!text-white focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
                   >Open Data Stream</button>
                    <button 
                     onMouseEnter={() => audioService.playHover()}
                     onClick={() => { audioService.playClick(); onCompare(s.Constructor.constructorId); }}
-                    className="btn-industrial w-full !bg-transparent !border-transparent opacity-50 hover:opacity-100"
+                    aria-label={`View pilot pair for ${s.Constructor.name}`}
+                    className="btn-industrial w-full !bg-transparent !border-transparent opacity-50 hover:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
                   >View Pilot Pair</button>
                 </div>
               </div>
@@ -253,7 +259,7 @@ const Teams: React.FC<TeamsProps> = ({ standings, onCompare }) => {
       {/* Team Telemetry Modal */}
       {telemetryTeam && (
         <div className="modal-overlay" onClick={() => { audioService.playClick(); setTelemetryTeam(null); }}>
-          <div className="panel-3d w-full max-w-2xl animate-broadcast self-start" onClick={e => e.stopPropagation()}>
+          <div ref={telemetryRef} className="panel-3d w-full max-w-2xl animate-broadcast self-start" onClick={e => e.stopPropagation()}>
             <div className="px-10 py-8 bg-[var(--bg-panel)]/40 border-b border-[var(--border-ui)] flex justify-between items-center">
               <div>
                 <div className="text-[10px] font-orbitron font-bold text-[var(--rbr-yellow)] uppercase tracking-[0.5em] mb-1">Deep Telemetry Link</div>

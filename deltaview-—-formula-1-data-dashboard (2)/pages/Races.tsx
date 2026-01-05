@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Race } from '../types';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { f1Service } from '../services/f1Service';
 import { audioService } from '../services/audioService';
 
@@ -11,6 +12,14 @@ interface RacesProps {
 const Races: React.FC<RacesProps> = ({ races, year }) => {
   const [selectedRaceResults, setSelectedRaceResults] = useState<Race | null>(null);
   const [loadingResults, setLoadingResults] = useState(false);
+  const resultsRef = useRef<HTMLDivElement | null>(null);
+
+  useFocusTrap(resultsRef, !!selectedRaceResults);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (selectedRaceResults) setTimeout(() => closeRef.current?.focus(), 0);
+  }, [selectedRaceResults]);
 
   const isPast = (dateStr: string) => {
     return new Date(dateStr) < new Date();
@@ -30,7 +39,7 @@ const Races: React.FC<RacesProps> = ({ races, year }) => {
   return (
     <div className="p-4 md:p-8 space-y-6 animate-broadcast">
       <div>
-        <h2 className="font-titillium text-4xl font-black italic uppercase tracking-tighter">
+        <h2 className="font-titillium text-4xl font-black italic uppercase tracking-tighter" aria-label="Season calendar heading">
           SEASON <span className="text-[var(--rbr-red)]">CALENDAR</span>
         </h2>
         <p className="text-[var(--text-muted)] text-[10px] font-orbitron font-bold uppercase tracking-[0.2em] mt-2">Official FIA Session Schedule & Classification</p>
@@ -38,7 +47,7 @@ const Races: React.FC<RacesProps> = ({ races, year }) => {
 
       <div className="panel-3d overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left timing-monitor">
+          <table aria-label="Season races schedule" className="w-full text-left timing-monitor">
             <thead className="text-[10px] uppercase font-black text-[var(--text-muted)] bg-black/20">
               <tr>
                 <th className="px-8 py-4">RD</th>
@@ -78,15 +87,15 @@ const Races: React.FC<RacesProps> = ({ races, year }) => {
 
       {/* Race Results Modal */}
       {selectedRaceResults && (
-        <div className="modal-overlay" onClick={() => { audioService.playClick(); setSelectedRaceResults(null); }}>
-          <div className="panel-3d w-full max-w-6xl animate-broadcast" onClick={e => e.stopPropagation()}>
+        <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="race-dialog-title" onClick={() => { audioService.playClick(); setSelectedRaceResults(null); }}>
+          <div ref={resultsRef} className="panel-3d w-full max-w-6xl animate-broadcast" onClick={e => e.stopPropagation()}>
             <div className="px-10 py-8 border-b border-[var(--border-ui)] flex justify-between items-center bg-black/40">
               <div>
                 <div className="text-[10px] font-orbitron font-bold text-[var(--rbr-yellow)] uppercase tracking-[0.5em] mb-1">Race Classification Protocol</div>
-                <h3 className="text-5xl font-titillium font-black italic uppercase italic leading-none">{selectedRaceResults.raceName}</h3>
+                <h3 id="race-dialog-title" className="text-5xl font-titillium font-black italic uppercase italic leading-none">{selectedRaceResults.raceName}</h3>
                 <div className="text-[11px] font-bold text-[var(--text-muted)] uppercase mt-2">{selectedRaceResults.Circuit.circuitName} — {selectedRaceResults.date}</div>
               </div>
-              <button onMouseEnter={() => audioService.playHover()} onClick={() => { audioService.playClick(); setSelectedRaceResults(null); }} className="text-4xl text-[var(--text-muted)] hover:text-white font-light">✕</button>
+              <button ref={closeRef} onMouseEnter={() => audioService.playHover()} onClick={() => { audioService.playClick(); setSelectedRaceResults(null); }} className="text-4xl text-[var(--text-muted)] hover:text-white font-light focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]" aria-label="Close race results">✕</button>
             </div>
             
             <div className="p-4 md:p-10 max-h-[60vh] overflow-y-auto">

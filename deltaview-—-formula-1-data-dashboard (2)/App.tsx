@@ -13,7 +13,7 @@ import { audioService } from './services/audioService';
 const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [activeTab, setActiveTab] = useState('Dashboard');
-  const [selectedYear, setSelectedYear] = useState('2024');
+  const [selectedYear, setSelectedYear] = useState('2025');
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -77,9 +77,20 @@ const App: React.FC = () => {
       }
     } catch (err) {
       console.error(err);
-      setError('Data link temporarily unavailable. Verify season active status.');
-      setLoading(false);
-      setIsRefreshing(false);
+      const snapshot = f1Service.getCachedSnapshot(year);
+      if (snapshot && ( (snapshot.drivers && snapshot.drivers.length) || (snapshot.constructors && snapshot.constructors.length) || (snapshot.schedule && snapshot.schedule.length) )) {
+        // Use cached snapshot when network fails
+        setDriverStandings(snapshot.drivers || []);
+        setConstructorStandings(snapshot.constructors || []);
+        setRaces(snapshot.schedule || []);
+        setError('OFFLINE: Showing cached snapshot — data may be stale.');
+        setLoading(false);
+        setIsRefreshing(false);
+      } else {
+        setError('Data link temporarily unavailable. Verify season active status.');
+        setLoading(false);
+        setIsRefreshing(false);
+      }
     }
   }, []);
 
@@ -109,7 +120,7 @@ const App: React.FC = () => {
           <div className="w-20 h-20 bg-[#E10600]/10 rounded-full flex items-center justify-center text-4xl border border-[#E10600]/20 animate-pulse">⚠️</div>
           <div className="text-center">
             <div className="text-[#E10600] font-orbitron text-xl uppercase tracking-widest mb-2 italic">Signal Loss Detected</div>
-            <p className="text-gray-500 text-sm max-w-md mx-auto uppercase tracking-tighter">The data bridge for {selectedYear} is unresponsive.</p>
+            <p className="text-gray-500 text-sm max-w-md mx-auto uppercase tracking-tighter">{error && error.startsWith('OFFLINE') ? `You are offline — showing cached snapshot for ${selectedYear}. Data may be stale.` : `The data bridge for ${selectedYear} is unresponsive.`}</p>
           </div>
           <div className="flex space-x-4">
             <button 
@@ -191,7 +202,7 @@ const App: React.FC = () => {
             </span>
           </div>
           <div className="flex items-center space-x-6 mt-2 md:mt-0">
-            <span className="opacity-50 tracking-widest">Kayden — CP2 Motorsport Division</span>
+            <span className="opacity-50 tracking-widest">Kayden — CP20 Motorsport Division</span>
             <div className="flex space-x-1.5">
               <div className="w-1 h-1 bg-[#FFD700] rounded-full"></div>
               <div className="w-1 h-1 bg-[#E10600] rounded-full"></div>
