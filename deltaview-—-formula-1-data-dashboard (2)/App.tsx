@@ -6,6 +6,7 @@ import Drivers from './pages/Drivers';
 import Teams from './pages/Teams';
 import Races from './pages/Races';
 import Compare from './pages/Compare';
+import Bibliography from './pages/Bibliography';
 import { f1Service } from './services/f1Service';
 import { DriverStanding, ConstructorStanding, Race } from './types';
 
@@ -142,6 +143,7 @@ const App: React.FC = () => {
             case 'Teams': return <Teams standings={constructorStandings} onCompare={handleTeamCompare} />;
             case 'Races': return <Races races={races} year={selectedYear} />;
             case 'Compare': return <Compare drivers={driverStandings} initialSelection={preSelectedDrivers} />;
+            case 'Bibliography': return <Bibliography />;
             default: return <Dashboard driverStandings={driverStandings} constructorStandings={constructorStandings} races={races} selectedYear={selectedYear} />;
           }
         })()}
@@ -150,7 +152,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-28 selection:bg-[#E10600] selection:text-white">
+    <div className="min-h-screen pb-32 md:pb-28 selection:bg-[#E10600] selection:text-white">
       {loading && (
         <LoadingScreen 
           dataReady={dataLoaded} 
@@ -168,7 +170,7 @@ const App: React.FC = () => {
         onYearChange={setSelectedYear}
       />
 
-      <main className="max-w-[1400px] mx-auto transition-all duration-300">
+      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300">
         {renderContent()}
       </main>
 

@@ -35,7 +35,7 @@ const Compare: React.FC<CompareProps> = ({ drivers, initialSelection }) => {
   };
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-8 animate-in fade-in duration-500">
       <h2 className="font-titillium text-3xl font-bold italic uppercase tracking-tighter text-[var(--text-main)]">
         Technical <span className="text-[var(--rbr-red)]">Versus</span> Mode
       </h2>

@@ -63,7 +63,7 @@ const Teams: React.FC<TeamsProps> = ({ standings, onCompare }) => {
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-10 animate-broadcast">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 animate-broadcast">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row justify-between items-end gap-4 border-b border-[var(--border-ui)] pb-6">
         <div>
@@ -83,7 +83,7 @@ const Teams: React.FC<TeamsProps> = ({ standings, onCompare }) => {
       </div>
 
       {/* ANALYTICS COMMAND CENTER */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
         <div className="panel-3d p-6 min-h-[400px] flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-[10px] font-orbitron font-black text-[var(--text-muted)] uppercase tracking-widest">Points Dominance Share</h3>

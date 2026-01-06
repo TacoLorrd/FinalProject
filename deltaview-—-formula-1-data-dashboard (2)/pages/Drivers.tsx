@@ -78,7 +78,7 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-6 animate-broadcast">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 animate-broadcast">
       <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
         <div>
           <h2 className="font-titillium text-4xl font-black italic uppercase tracking-tighter leading-none">
@@ -143,7 +143,7 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {filtered.map((s) => {
           const constructorId = s.Constructors[0]?.constructorId || 'unknown';
           const teamColor = TEAM_COLORS[constructorId] || '#FFFFFF';

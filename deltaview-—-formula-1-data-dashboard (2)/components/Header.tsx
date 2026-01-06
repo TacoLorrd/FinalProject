@@ -12,7 +12,7 @@ interface HeaderProps extends ThemeContextProps {
 
 const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleTheme, activeTab, onTabChange, selectedYear, onYearChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const tabs = ['Dashboard', 'Drivers', 'Teams', 'Races', 'Compare'];
+  const tabs = ['Dashboard', 'Drivers', 'Teams', 'Races', 'Compare', 'Bibliography'];
   const years = Array.from({ length: 15 }, (_, i) => (2025 - i).toString());
 
   const handleTabClick = (tab: string) => {

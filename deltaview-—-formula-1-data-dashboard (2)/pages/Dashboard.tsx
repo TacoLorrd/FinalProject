@@ -88,7 +88,7 @@ const Dashboard: React.FC<DashboardProps> = ({ driverStandings, constructorStand
   });
 
   return (
-    <div className="p-4 md:p-8 space-y-8 animate-broadcast">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8 animate-broadcast">
       {/* Top Banner - Theme-aware Broadcast Graphics Style */}
       <div className="panel-3d p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center overflow-hidden">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-[#D31336]"></div>
@@ -131,7 +131,7 @@ const Dashboard: React.FC<DashboardProps> = ({ driverStandings, constructorStand
       </div>
 
       {/* KPI Cards & Track Environment Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
         {/* Track Environment Panel */}
         <div className="panel-3d p-6 bg-[var(--bg-panel)] border-t border-[var(--accent-blue)]/30 xl:col-span-1">
           <div className="text-[9px] font-orbitron font-black text-[var(--accent-blue)] uppercase tracking-[0.3em] mb-4">Environment</div>
@@ -187,7 +187,7 @@ const Dashboard: React.FC<DashboardProps> = ({ driverStandings, constructorStand
             </div>
           </div>
           <div className="p-4 overflow-x-auto">
-            <table aria-label="Top 10 driver standings" className="w-full timing-monitor min-w-[600px]">
+            <table aria-label="Top 10 driver standings" className="w-full timing-monitor min-w-[400px] md:min-w-[600px]">
               <thead className="text-[10px] font-orbitron font-bold text-[var(--text-muted)] uppercase">
                 <tr>
                   <th scope="col" className="text-left w-12">Pos</th>
@@ -245,7 +245,7 @@ const Dashboard: React.FC<DashboardProps> = ({ driverStandings, constructorStand
       </div>
 
       {/* RACE MONITOR & TYRE LIFE */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
         <div className="lg:col-span-3 space-y-4">
           <div className="flex items-center space-x-4 mb-2">
             <div className="h-4 w-1 bg-[var(--rbr-yellow)]"></div>

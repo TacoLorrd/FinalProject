@@ -35,7 +35,7 @@ const Races: React.FC<RacesProps> = ({ races, year }) => {
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-6 animate-broadcast">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 animate-broadcast">
       <div>
         <h2 className="font-titillium text-4xl font-black italic uppercase tracking-tighter" aria-label="Season calendar heading">
           SEASON <span className="text-[var(--rbr-red)]">CALENDAR</span>
