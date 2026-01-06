@@ -8,7 +8,6 @@ import Races from './pages/Races';
 import Compare from './pages/Compare';
 import { f1Service } from './services/f1Service';
 import { DriverStanding, ConstructorStanding, Race } from './types';
-import { audioService } from './services/audioService';
 
 const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -124,8 +123,7 @@ const App: React.FC = () => {
           </div>
           <div className="flex space-x-4">
             <button 
-              onMouseEnter={() => audioService.playHover()}
-              onClick={() => { audioService.playClick(); fetchData(selectedYear); }}
+              onClick={() => { fetchData(selectedYear); }}
               className="px-8 py-3 bg-[#E10600] text-white font-bold rounded-lg hover:bg-red-700 transition-all uppercase text-[10px] tracking-[0.2em]"
             >
               Retry Uplink

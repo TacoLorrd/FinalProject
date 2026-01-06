@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import ThemeToggle from './ThemeToggle';
 import { ThemeContextProps } from '../types';
 import Logo from './Logo';
-import { audioService } from '../services/audioService';
 
 interface HeaderProps extends ThemeContextProps {
   activeTab: string;
@@ -17,7 +16,6 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleTheme, activeTab, onT
   const years = Array.from({ length: 15 }, (_, i) => (2025 - i).toString());
 
   const handleTabClick = (tab: string) => {
-    audioService.playClick();
     onTabChange(tab);
     setIsMenuOpen(false);
   };
@@ -27,8 +25,7 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleTheme, activeTab, onT
       <div className="flex items-center space-x-4 md:space-x-12">
         {/* Hamburger Menu Button - Mobile/Tablet Only */}
         <button 
-          onClick={() => { audioService.playClick(); setIsMenuOpen(!isMenuOpen); }}
-          onMouseEnter={() => audioService.playHover()}
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="xl:hidden p-2 text-[var(--text-main)] transition-transform active:scale-95"
           aria-label="Toggle Menu"
         >
@@ -42,7 +39,6 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleTheme, activeTab, onT
         <div 
           className="relative flex items-center space-x-2 md:space-x-4 cursor-pointer group" 
           onClick={() => handleTabClick('Dashboard')}
-          onMouseEnter={() => audioService.playHover()}
         >
           <div className="relative shrink-0">
             <div className="absolute inset-0 bg-[var(--rbr-red)] transform -skew-x-12 translate-x-1 translate-y-1 opacity-20 blur-sm group-hover:translate-x-1.5 group-hover:translate-y-1.5 transition-transform" />
@@ -66,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleTheme, activeTab, onT
             <button
               key={tab}
               onClick={() => handleTabClick(tab)}
-              onMouseEnter={() => audioService.playHover()}
+
               className={`relative px-8 py-3 text-[11px] font-black uppercase tracking-[0.3em] transition-all duration-300 ${
                 activeTab === tab 
                   ? 'text-[var(--rbr-red)]' 
@@ -89,7 +85,7 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleTheme, activeTab, onT
         
         <div className="flex flex-col items-end">
           <span className="hidden sm:inline text-[9px] font-orbitron font-black text-[var(--text-muted)] uppercase tracking-widest mb-1 md:mb-2">Cycle Feed</span>
-          <div className="relative" onMouseEnter={() => audioService.playHover()} onClick={() => audioService.playClick()}>
+          <div className="relative">
             <select 
               value={selectedYear}
               onChange={(e) => onYearChange(e.target.value)}
@@ -111,8 +107,7 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleTheme, activeTab, onT
               <span className="font-titillium text-2xl font-black italic tracking-tighter text-[var(--text-main)] uppercase">DeltaView</span>
             </div>
             <button 
-              onClick={() => { audioService.playClick(); setIsMenuOpen(false); }} 
-              onMouseEnter={() => audioService.playHover()}
+              onClick={() => { setIsMenuOpen(false); }} 
               className="w-10 h-10 flex items-center justify-center text-2xl font-light text-[var(--text-muted)] hover:text-white transition-colors"
             >✕</button>
           </div>
@@ -122,7 +117,6 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleTheme, activeTab, onT
               <button
                 key={tab}
                 onClick={() => handleTabClick(tab)}
-                onMouseEnter={() => audioService.playHover()}
                 className={`text-left py-3 px-4 text-2xl font-titillium font-black uppercase italic tracking-tighter transition-all border-l-4 ${
                   activeTab === tab 
                     ? 'text-[var(--rbr-red)] bg-white/5 border-[var(--rbr-red)] translate-x-2' 

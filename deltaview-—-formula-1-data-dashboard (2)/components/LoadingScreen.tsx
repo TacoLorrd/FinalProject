@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { audioService } from '../services/audioService';
 
 interface LoadingScreenProps {
   dataReady: boolean;
@@ -60,8 +59,6 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ dataReady, onComplete, is
   }, [progress, dataReady, onComplete]);
 
   const handleStart = () => {
-    audioService.unlock();
-    audioService.playStartup();
     setIsStarted(true);
   };
 
@@ -76,7 +73,6 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ dataReady, onComplete, is
             <div className="text-[10px] font-orbitron font-black text-white/40 uppercase tracking-[0.6em] animate-pulse">System Standby</div>
             <button 
               onClick={handleStart}
-              onMouseEnter={() => audioService.playHover()}
               className="px-12 py-5 bg-[var(--rbr-red)] text-white font-titillium font-black text-xl italic uppercase tracking-widest rounded-none border border-white/20 shadow-[0_0_30px_rgba(211,19,54,0.3)] hover:scale-105 hover:bg-red-700 active:scale-95 transition-all"
             >
               Initiate Telemetry

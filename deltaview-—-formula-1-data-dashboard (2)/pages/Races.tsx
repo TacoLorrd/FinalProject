@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Race } from '../types';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { f1Service } from '../services/f1Service';
-import { audioService } from '../services/audioService';
 
 interface RacesProps {
   races: Race[];
@@ -26,7 +25,6 @@ const Races: React.FC<RacesProps> = ({ races, year }) => {
   };
 
   const handleViewResults = async (race: Race) => {
-    audioService.playClick();
     setLoadingResults(true);
     try {
       const results = await f1Service.getRaceResults(year, race.round);
@@ -70,7 +68,6 @@ const Races: React.FC<RacesProps> = ({ races, year }) => {
                   <td className="px-8 py-6 text-right">
                     {isPast(r.date) ? (
                       <button 
-                        onMouseEnter={() => audioService.playHover()}
                         onClick={() => handleViewResults(r)}
                         className="btn-industrial !py-1.5 !px-4"
                       >Results</button>
@@ -87,7 +84,7 @@ const Races: React.FC<RacesProps> = ({ races, year }) => {
 
       {/* Race Results Modal */}
       {selectedRaceResults && (
-        <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="race-dialog-title" onClick={() => { audioService.playClick(); setSelectedRaceResults(null); }}>
+        <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="race-dialog-title" onClick={() => setSelectedRaceResults(null)}>
           <div ref={resultsRef} className="panel-3d w-full max-w-6xl animate-broadcast" onClick={e => e.stopPropagation()}>
             <div className="px-10 py-8 border-b border-[var(--border-ui)] flex justify-between items-center bg-black/40">
               <div>
@@ -95,7 +92,7 @@ const Races: React.FC<RacesProps> = ({ races, year }) => {
                 <h3 id="race-dialog-title" className="text-5xl font-titillium font-black italic uppercase italic leading-none">{selectedRaceResults.raceName}</h3>
                 <div className="text-[11px] font-bold text-[var(--text-muted)] uppercase mt-2">{selectedRaceResults.Circuit.circuitName} — {selectedRaceResults.date}</div>
               </div>
-              <button ref={closeRef} onMouseEnter={() => audioService.playHover()} onClick={() => { audioService.playClick(); setSelectedRaceResults(null); }} className="text-4xl text-[var(--text-muted)] hover:text-white font-light focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]" aria-label="Close race results">✕</button>
+              <button ref={closeRef} onClick={() => { setSelectedRaceResults(null); }} className="text-4xl text-[var(--text-muted)] hover:text-white font-light focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]" aria-label="Close race results">✕</button>
             </div>
             
             <div className="p-4 md:p-10 max-h-[60vh] overflow-y-auto">
@@ -133,7 +130,7 @@ const Races: React.FC<RacesProps> = ({ races, year }) => {
                   <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
                   <span className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest">Broadcast classification verified</span>
                </div>
-               <button onMouseEnter={() => audioService.playHover()} onClick={() => { audioService.playClick(); setSelectedRaceResults(null); }} className="btn-industrial">Close Results</button>
+               <button onClick={() => { setSelectedRaceResults(null); }} className="btn-industrial">Close Results</button>
             </div>
           </div>
         </div>

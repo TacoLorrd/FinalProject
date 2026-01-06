@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { DriverStanding } from '../types';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
-import { audioService } from '../services/audioService';
 
 interface DriversProps {
   standings: DriverStanding[];
@@ -96,15 +95,13 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
             placeholder="Search Pilot..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onMouseEnter={() => audioService.playHover()}
             className="flex-1 md:w-64 bg-[var(--bg-panel)] border border-[var(--border-ui)] rounded-none px-4 py-2 text-sm focus:border-[var(--rbr-yellow)] outline-none font-bold text-[var(--text-main)] focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
           />
           <select 
             id="driver-sort"
             aria-label="Sort drivers"
             value={sortBy}
-            onChange={(e) => { audioService.playClick(); setSortBy(e.target.value as any); }}
-            onMouseEnter={() => audioService.playHover()}
+            onChange={(e) => setSortBy(e.target.value as any)}
             className="bg-[var(--bg-panel)] border border-[var(--border-ui)] px-4 py-2 text-xs font-black uppercase outline-none cursor-pointer text-[var(--text-main)] focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
           >
             <option value="points">Sort: PTS</option>
@@ -112,8 +109,7 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
           </select>
 
           <button
-            onMouseEnter={() => audioService.playHover()}
-            onClick={() => { audioService.playClick();
+            onClick={() => {
               const csvRows = [
                 ['Number','Given Name','Family Name','Team','Nationality','Age','Pts','Wins','Position']
               ];
@@ -159,9 +155,8 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
               role="button"
               tabIndex={0}
               aria-label={`Open ${s.Driver.givenName} ${s.Driver.familyName} details`}
-              onMouseEnter={() => audioService.playHover()}
-              onClick={() => { audioService.playClick(); setSelectedDriver(s); setShowBio(false); }}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audioService.playClick(); setSelectedDriver(s); setShowBio(false); } }}
+              onClick={() => { setSelectedDriver(s); setShowBio(false); }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDriver(s); setShowBio(false); } }}
               className="panel-3d group cursor-pointer hover:scale-[1.02] transition-all duration-300 relative focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
               style={{ 
                 borderLeft: `6px solid ${teamColor}`,
@@ -213,7 +208,7 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
       </div>
 
       {selectedDriver && (
-        <div className="modal-overlay" onClick={() => { audioService.playClick(); setSelectedDriver(null); }} role="dialog" aria-modal="true" aria-labelledby="driver-dialog-title" tabIndex={-1} onKeyDown={(e) => { if (e.key === 'Escape') { audioService.playClick(); setSelectedDriver(null); } }}>
+        <div className="modal-overlay" onClick={() => setSelectedDriver(null)} role="dialog" aria-modal="true" aria-labelledby="driver-dialog-title" tabIndex={-1} onKeyDown={(e) => { if (e.key === 'Escape') { setSelectedDriver(null); } }}>
           <div ref={modalRef} className="panel-3d w-full max-w-4xl animate-broadcast self-start" onClick={e => e.stopPropagation()}>
             <div className="relative h-64 bg-gradient-to-br from-[var(--bg-panel)] to-[var(--bg-main)] flex items-center p-8 overflow-hidden" role="img" aria-label={`Performance profile and data for ${selectedDriver.Driver.givenName} ${selectedDriver.Driver.familyName}`} aria-describedby="driver-radar-desc">
               <div 
@@ -244,8 +239,7 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
               </div>
               <button 
                 ref={closeButtonRef}
-                onClick={() => { audioService.playClick(); setSelectedDriver(null); }}
-                onMouseEnter={() => audioService.playHover()}
+                onClick={() => setSelectedDriver(null)}
                 className="absolute top-6 right-8 text-[var(--text-muted)] hover:text-[var(--text-main)] text-3xl font-light z-20 focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
                 aria-label="Close driver details dialog"
               >✕</button>
@@ -279,7 +273,7 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
                     <div className="space-y-6 animate-broadcast">
                       <div className="flex items-center justify-between border-b border-[var(--border-ui)] pb-4">
                         <h4 className="font-titillium font-black italic uppercase text-xl text-[var(--text-main)]">Historical Intelligence</h4>
-                        <button onMouseEnter={() => audioService.playHover()} onClick={() => { audioService.playClick(); setShowBio(false); }} className="text-[10px] font-bold uppercase text-[var(--rbr-red)]">← Back to Stats</button>
+                        <button onClick={() => { setShowBio(false); }} className="text-[10px] font-bold uppercase text-[var(--rbr-red)]">← Back to Stats</button>
                       </div>
                       <p className="text-sm text-[var(--text-muted)] leading-relaxed italic">
                         {selectedDriver.Driver.givenName} {selectedDriver.Driver.familyName}, representing {selectedDriver.Constructors[0]?.name}, has demonstrated elite technical proficiency across the current season. Optimized for high-G load endurance and strategic tire management.
@@ -312,13 +306,11 @@ const Drivers: React.FC<DriversProps> = ({ standings, selectedYear }) => {
                   
                   <div className="flex space-x-4 pt-4">
                     <button 
-                      onMouseEnter={() => audioService.playHover()}
-                      onClick={() => { audioService.playClick(); setShowBio(!showBio); }}
+                      onClick={() => { setShowBio(!showBio); }}
                       className="flex-1 btn-industrial"
                     >{showBio ? 'View Core Stats' : 'View Full Bio'}</button>
                     <button 
-                      onMouseEnter={() => audioService.playHover()}
-                      onClick={() => { audioService.playClick(); setSelectedDriver(null); }}
+                      onClick={() => { setSelectedDriver(null); }}
                       className="flex-1 btn-industrial !bg-transparent opacity-50 hover:opacity-100"
                     >Close Terminal</button>
                   </div>

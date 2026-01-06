@@ -5,7 +5,6 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, 
   PieChart, Pie, Legend
 } from 'recharts';
-import { audioService } from '../services/audioService';
 
 interface TeamsProps {
   standings: ConstructorStanding[];
@@ -212,7 +211,8 @@ const Teams: React.FC<TeamsProps> = ({ standings, onCompare }) => {
           const tColor = TEAM_COLORS[cid] || '#888888';
           
           return (
-            <div key={cid} role="button" tabIndex={0} aria-label={`Open telemetry for ${s.Constructor.name}`} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audioService.playClick(); setTelemetryTeam(s); } }} className="panel-3d group cursor-pointer hover:scale-[1.02] transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]" style={{ borderLeft: `4px solid ${tColor}` }}>
+            <div key={cid} role="button" tabIndex={0} aria-label={`Open telemetry for ${s.Constructor.name}`} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setTelemetryTeam(s); } }}
+ className="panel-3d group cursor-pointer hover:scale-[1.02] transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]" style={{ borderLeft: `4px solid ${tColor}` }}>
               <div className="p-8 relative overflow-hidden">
                 <div className="absolute top-[0px] right-[10px] font-orbitron text-9xl opacity-5 group-hover:opacity-10 transition-opacity font-black italic select-none pointer-events-none text-[var(--text-main)]">
                   {s.position}
@@ -238,14 +238,12 @@ const Teams: React.FC<TeamsProps> = ({ standings, onCompare }) => {
                 
                 <div className="mt-8 flex flex-col gap-3">
                    <button 
-                    onMouseEnter={() => audioService.playHover()}
-                    onClick={() => { audioService.playClick(); setTelemetryTeam(s); }}
+                    onClick={() => { setTelemetryTeam(s); }}
                     aria-label={`Open data stream for ${s.Constructor.name}`}
                     className="btn-industrial w-full !bg-[var(--text-main)]/5 !border-[var(--border-ui)] hover:!bg-[var(--rbr-red)] hover:!text-white focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
                   >Open Data Stream</button>
                    <button 
-                    onMouseEnter={() => audioService.playHover()}
-                    onClick={() => { audioService.playClick(); onCompare(s.Constructor.constructorId); }}
+                    onClick={() => { onCompare(s.Constructor.constructorId); }}
                     aria-label={`View pilot pair for ${s.Constructor.name}`}
                     className="btn-industrial w-full !bg-transparent !border-transparent opacity-50 hover:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--rbr-yellow)]"
                   >View Pilot Pair</button>
@@ -258,14 +256,14 @@ const Teams: React.FC<TeamsProps> = ({ standings, onCompare }) => {
 
       {/* Team Telemetry Modal */}
       {telemetryTeam && (
-        <div className="modal-overlay" onClick={() => { audioService.playClick(); setTelemetryTeam(null); }}>
+        <div className="modal-overlay" onClick={() => setTelemetryTeam(null)}>
           <div ref={telemetryRef} className="panel-3d w-full max-w-2xl animate-broadcast self-start" onClick={e => e.stopPropagation()}>
             <div className="px-10 py-8 bg-[var(--bg-panel)]/40 border-b border-[var(--border-ui)] flex justify-between items-center">
               <div>
                 <div className="text-[10px] font-orbitron font-bold text-[var(--rbr-yellow)] uppercase tracking-[0.5em] mb-1">Deep Telemetry Link</div>
                 <h3 className="text-4xl font-titillium font-black italic uppercase leading-none text-[var(--text-main)]">{telemetryTeam.Constructor.name}</h3>
               </div>
-              <button onMouseEnter={() => audioService.playHover()} onClick={() => { audioService.playClick(); setTelemetryTeam(null); }} className="text-3xl text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">✕</button>
+              <button onClick={() => { setTelemetryTeam(null); }} className="text-3xl text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">✕</button>
             </div>
             <div className="p-10 space-y-8">
               <div className="grid grid-cols-2 gap-6">
@@ -311,7 +309,7 @@ const Teams: React.FC<TeamsProps> = ({ standings, onCompare }) => {
               </div>
             </div>
             <div className="px-10 pb-10">
-               <button onMouseEnter={() => audioService.playHover()} onClick={() => { audioService.playClick(); setTelemetryTeam(null); }} className="w-full btn-industrial">Secure Terminal</button>
+               <button onClick={() => { setTelemetryTeam(null); }} className="w-full btn-industrial">Secure Terminal</button>
             </div>
           </div>
         </div>

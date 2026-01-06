@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ThemeContextProps } from '../types';
-import { audioService } from '../services/audioService';
 
 const ThemeToggle: React.FC<ThemeContextProps> = ({ isDarkMode, toggleTheme }) => {
   const [smokeParticles, setSmokeParticles] = useState<{ id: number; x: string; driftX: string; driftY: string; rot: string; scale: number }[]>([]);
@@ -10,8 +9,6 @@ const ThemeToggle: React.FC<ThemeContextProps> = ({ isDarkMode, toggleTheme }) =
     const particleCount = 20; 
     const interval = duration / particleCount;
     
-    audioService.playClick();
-    audioService.playScreech();
     toggleTheme();
 
     const movingToLight = isDarkMode;
@@ -60,7 +57,7 @@ const ThemeToggle: React.FC<ThemeContextProps> = ({ isDarkMode, toggleTheme }) =
         <div className={`w-4 h-0.5 mt-1 transition-all duration-300 ${isDarkMode ? 'bg-[#D31336] shadow-[0_0_8px_#D31336]' : 'bg-transparent'}`}></div>
       </div>
 
-      <div className="f1-toggle-container group" onMouseEnter={() => audioService.playHover()}>
+      <div className="f1-toggle-container group">
         <label className="cursor-pointer relative block">
           <input 
             type="checkbox" 

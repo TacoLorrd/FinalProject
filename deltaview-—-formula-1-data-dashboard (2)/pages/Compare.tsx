@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { DriverStanding } from '../types';
-import { audioService } from '../services/audioService';
 
 interface CompareProps {
   drivers: DriverStanding[];
@@ -47,8 +46,7 @@ const Compare: React.FC<CompareProps> = ({ drivers, initialSelection }) => {
           <label className="text-[10px] font-orbitron font-bold text-[var(--text-muted)] uppercase tracking-widest">Primary Candidate</label>
           <select 
             value={driverA}
-            onMouseEnter={() => audioService.playHover()}
-            onChange={(e) => { audioService.playClick(); setDriverA(e.target.value); }}
+            onChange={(e) => setDriverA(e.target.value)}
             className="w-full bg-[var(--bg-panel)] border border-[var(--border-ui)] rounded-lg p-3 font-bold text-[var(--text-main)] outline-none focus:ring-1 focus:ring-[#D31336]"
           >
             {drivers.map(d => <option key={d.Driver.driverId} value={d.Driver.driverId}>{d.Driver.givenName} {d.Driver.familyName}</option>)}
@@ -71,8 +69,7 @@ const Compare: React.FC<CompareProps> = ({ drivers, initialSelection }) => {
           <label className="text-[10px] font-orbitron font-bold text-[var(--text-muted)] uppercase tracking-widest text-right block">Benchmark Candidate</label>
           <select 
             value={driverB}
-            onMouseEnter={() => audioService.playHover()}
-            onChange={(e) => { audioService.playClick(); setDriverB(e.target.value); }}
+            onChange={(e) => setDriverB(e.target.value)}
             className="w-full bg-[var(--bg-panel)] border border-[var(--border-ui)] rounded-lg p-3 font-bold text-[var(--text-main)] outline-none focus:ring-1 focus:ring-[var(--rbr-yellow)]"
           >
             {drivers.map(d => <option key={d.Driver.driverId} value={d.Driver.driverId}>{d.Driver.givenName} {d.Driver.familyName}</option>)}
