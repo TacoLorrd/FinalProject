@@ -61,5 +61,3 @@ npm test -- --run
 - Dev server not reachable — ensure the server started with `--host 0.0.0.0` (or use the network URL shown in the server output).
 
 ---
-
-If you'd like, I can also add a short "How to contribute" section or a troubleshooting FAQ — tell me your preference.
