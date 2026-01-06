@@ -33,5 +33,3 @@ npm --prefix "deltaview-—-formula-1-data-dashboard (2)" run dev -- --host 0.0.
 - For build and tests, see the project README linked above.
 
 ---
-
-If you'd like, I can add a short repository-level badge or a contributor guide next.
